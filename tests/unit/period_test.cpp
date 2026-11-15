@@ -28,8 +28,6 @@ TEST_CASE("Period comparisons come from operator<=>", "[domain]") {
 }
 
 TEST_CASE("daysInMonth is usable at compile time (constexpr)", "[domain]") {
-    // UNCOMMENT this line once daysInMonth() is correct. static_assert runs in the
-    // COMPILER: if daysInMonth weren't constexpr-correct, this fails to BUILD.
-    // static_assert(Period{year{2028}, February}.daysInMonth() == 29);
+    static_assert(Period{year{2028}, February}.daysInMonth() == 29);
     SUCCEED();
 }

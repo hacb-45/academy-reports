@@ -43,6 +43,7 @@ FetchContent_MakeAvailable(Catch2)
 enable_testing()
 add_executable(academy_tests
   tests/unit/version_test.cpp
+  tests/unit/period_test.cpp
 )
 target_link_libraries(academy_tests PRIVATE
   academy_core academy_warnings Catch2::Catch2WithMain)
