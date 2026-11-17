@@ -25,6 +25,7 @@ endif()
 add_library(academy_core
   src/util/version.cpp
   src/domain/teaching_calendar.cpp
+  src/validation/normalize.cpp
 )
 target_include_directories(academy_core PUBLIC src)
 target_link_libraries(academy_core PRIVATE academy_warnings)
@@ -46,6 +47,7 @@ add_executable(academy_tests
   tests/unit/version_test.cpp
   tests/unit/period_test.cpp
   tests/unit/teaching_calendar_test.cpp
+  tests/unit/normalize_test.cpp
 )
 target_link_libraries(academy_tests PRIVATE
   academy_core academy_warnings Catch2::Catch2WithMain)
