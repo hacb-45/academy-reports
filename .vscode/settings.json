@@ -1,0 +1,15 @@
+{
+  // --- IntelliSense is driven by CMake Tools, so it always matches the build ---
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.default.cppStandard": "c++20",
+  "C_Cpp.default.cStandard": "c17",
+
+  // --- CMake Tools uses your presets as the single source of build truth ------
+  "cmake.useCMakePresets": "always",
+  "cmake.configureOnOpen": true,
+
+  // Quality-of-life
+  "editor.formatOnSave": true,
+  "C_Cpp.clang_format_fallbackStyle": "Google",
+  "files.associations": { "*.h": "cpp" }
+}
