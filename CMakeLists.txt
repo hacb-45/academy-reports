@@ -27,6 +27,7 @@ add_library(academy_core
   src/domain/teaching_calendar.cpp
   src/validation/normalize.cpp
   src/validation/import_outcome.cpp
+  src/validation/name_matcher.cpp
 )
 target_include_directories(academy_core PUBLIC src)
 target_link_libraries(academy_core PRIVATE academy_warnings)
@@ -50,6 +51,7 @@ add_executable(academy_tests
   tests/unit/teaching_calendar_test.cpp
   tests/unit/normalize_test.cpp
   tests/unit/import_outcome_test.cpp
+  tests/unit/name_matcher_test.cpp
 )
 target_link_libraries(academy_tests PRIVATE
   academy_core academy_warnings Catch2::Catch2WithMain)
