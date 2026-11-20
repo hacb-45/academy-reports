@@ -4,6 +4,10 @@
 
 namespace academy::csv {
 
+namespace {
+constexpr std::string_view kBom = "\xEF\xBB\xBF";
+}  // namespace
+
 std::vector<std::string> parseRecord(std::string_view line, char delim) {
   std::vector<std::string> fields;
   std::string current;  // the field being built
@@ -38,6 +42,57 @@ std::vector<std::string> parseRecord(std::string_view line, char delim) {
 
   fields.push_back(std::move(current));  // the final field (after the last delim)
   return fields;
+}
+
+std::string_view stripBom(std::string_view s) {
+  return s.starts_with(kBom) ? s.substr(kBom.size()) : s;
+}
+
+std::vector<std::vector<std::string>> parseDocument(std::string_view text, char delim) {
+  std::vector<std::vector<std::string>> rows;
+  std::vector<std::string> row;
+  std::string current;
+  bool inQuotes = false;
+
+  text = stripBom(text);
+
+  for (std::size_t i = 0; i < text.size(); ++i) {
+    const char c = text[i];
+    if (inQuotes) {
+      if (c == '"') {
+        if (i + 1 < text.size() && text[i + 1] == '"') {
+          current.push_back('"');
+          ++i;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current.push_back(c);  // embedded newlines land here -> preserved
+      }
+    } else {
+      if (c == '"') {
+        inQuotes = true;
+      } else if (c == delim) {
+        row.push_back(std::move(current));
+        current.clear();
+      } else if (c == '\r') {
+        // ignore '\r' so CRLF is tolerated -- do nothing here.
+      } else if (c == '\n') {
+        row.push_back(std::move(current));
+        current.clear();
+        rows.push_back(std::move(row));
+        row.clear();
+      } else {
+        current.push_back(c);
+      }
+    }
+  }
+
+  if (!current.empty() || !row.empty()) {
+    row.push_back(std::move(current));
+    rows.push_back(std::move(row));
+  }
+  return rows;
 }
 
 }  // namespace academy::csv
