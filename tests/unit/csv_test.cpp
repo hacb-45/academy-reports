@@ -69,3 +69,35 @@ TEST_CASE("document strips a leading BOM", "[csv]") {
 TEST_CASE("newline inside quotes is kept as field data", "[csv]") {
   REQUIRE(parseDocument("\"line1\nline2\",x") == Rows{{"line1\nline2", "x"}});
 }
+
+using academy::csv::quoteField;
+using academy::csv::writeDocument;
+
+TEST_CASE("quoteField leaves plain fields untouched", "[csv]") {
+  REQUIRE(quoteField("plain") == "plain");
+  REQUIRE(quoteField("2026-11-03;2026-11-05") == "2026-11-03;2026-11-05");  // ';' is fine
+}
+
+TEST_CASE("quoteField wraps fields with a comma", "[csv]") {
+  REQUIRE(quoteField("Costa, Miguel") == "\"Costa, Miguel\"");
+}
+
+TEST_CASE("quoteField doubles internal quotes", "[csv]") {
+  REQUIRE(quoteField(R"(say "hi")") == R"("say ""hi""")");
+}
+
+TEST_CASE("quoteField wraps fields containing a newline", "[csv]") {
+  REQUIRE(quoteField("line1\nline2") == "\"line1\nline2\"");
+}
+
+TEST_CASE("writeDocument emits BOM + CRLF", "[csv]") {
+  REQUIRE(writeDocument(Rows{{"a", "b"}}) == "\xEF\xBB\xBF" "a,b\r\n");
+}
+
+TEST_CASE("write then parse round-trips tricky fields", "[csv]") {
+  const Rows original{
+      {"Ana, Maria", "8"},
+      {R"(says "hi")", "note\nline"},
+  };
+  REQUIRE(parseDocument(writeDocument(original)) == original);  // the CSV-05 round-trip
+}

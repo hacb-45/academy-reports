@@ -19,4 +19,14 @@ namespace academy::csv {
 [[nodiscard]] std::vector<std::vector<std::string>> parseDocument(std::string_view text,
                                                                   char delim = ',');
 
+// Quote one field for output IF it needs it: a field containing the delimiter,
+// a double-quote, CR or LF is wrapped in "..." with internal quotes doubled
+// (defensive quoting, CSV-04). Otherwise returned unchanged.
+[[nodiscard]] std::string quoteField(std::string_view field, char delim = ',');
+
+// Serialize rows to a CSV document for the Windows-facing path: a leading UTF-8
+// BOM (CSV-01), CRLF line endings (CSV-02), fields quoted defensively (CSV-04).
+[[nodiscard]] std::string writeDocument(const std::vector<std::vector<std::string>>& rows,
+                                        char delim = ',');
+
 }  // namespace academy::csv

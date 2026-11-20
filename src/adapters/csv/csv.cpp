@@ -95,4 +95,44 @@ std::vector<std::vector<std::string>> parseDocument(std::string_view text, char 
   return rows;
 }
 
+std::string quoteField(std::string_view field, char delim) {
+  const bool needsQuote =
+      field.find(delim) != std::string_view::npos || field.find('"') != std::string_view::npos ||
+      field.find('\n') != std::string_view::npos || field.find('\r') != std::string_view::npos;
+
+  if (!needsQuote) {
+    return std::string{field};
+  }
+
+  std::string quoted;
+  quoted.push_back('"');
+  for (const char c : field) {
+    if (c == '"') {
+      quoted.push_back('"');  // double the quote
+    }
+    quoted.push_back(c);
+  }
+  quoted.push_back('"');
+  return quoted;
+}
+
+std::string writeDocument(const std::vector<std::vector<std::string>>& rows, char delim) {
+  // TODO:
+  //  - start the result with the BOM: std::string out{kBom};
+  //  - for each row: join quoteField(field, delim) with `delim` between fields,
+  //    then append "\r\n" after the row.
+  //  - return out;
+  std::string out{kBom};
+  for (const auto& row : rows) {
+    for (std::size_t i = 0; i < row.size(); ++i) {
+      out += quoteField(row[i], delim);
+      if (i + 1 < row.size()) {
+        out += delim;
+      }
+    }
+    out += "\r\n";
+  }
+  return out;  // STUB
+}
+
 }  // namespace academy::csv
